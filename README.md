@@ -13,4 +13,4 @@ Username -> fred
 ```
 
 ### `wpbrutepass.py`
-Soon:tm:
+Soon™

@@ -11,3 +11,6 @@ Wordlist: /usr/share/wordlists/common.txt
 Timeout.: 5
 Username -> fred
 ```
+
+### `wpbrutepass.py`
+Soon:tm:

